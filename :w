@@ -39,30 +39,12 @@ fetch('https://raw.githubusercontent.com/DealPete/forceDirected/master/countries
 
   })
 
-	var force = force.nodes(data.nodes)
-
-  force
+	force.nodes(data.nodes)
 			 .links(data.links)
        .charge(0)
        .charge(-75)
 			 .on('tick', tick)
-  
-  force.start()
-
-	
-
-	var drag = d3.behavior.drag().origin(function(d) { return d; }).on("drag", dragmove);
-	function dragmove(d) {
-    console.log(d)
-		d3.select(this)
-				.attr("x", d3.event.x)
-				.attr("y", d3.event.y);
-	}
-
-
-	d3.select('body').selectAll('div').call(drag)
-
-	
+			 .start()
 
 
   function tick() {
