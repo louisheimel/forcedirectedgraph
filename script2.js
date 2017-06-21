@@ -1,7 +1,5 @@
 // modified from the following code (Written by Mike Bostock): https://bl.ocks.org/mbostock/3180395
 
-const getCountryCode = e => e.target.classList[1].split('-')[1]
-
 var config = {
 	width:  960,
 	height: 700,
@@ -10,8 +8,6 @@ var config = {
 var canvas = d3.select('body').append('canvas')
 		.attr('width', config.width)
 		.attr('height', config.height)
-
-
 
 fetch('https://raw.githubusercontent.com/DealPete/forceDirected/master/countries.json')
 .then(response => response.json())

@@ -1,55 +1,68 @@
-// code inspiration from https://medium.com/ninjaconcept/interactive-dynamic-force-directed-graphs-with-d3-da720c6d7811
+// modified from the following code (Written by Mike Bostock): https://bl.ocks.org/mbostock/3180395
+
+var config = {
+	width:  800,
+	height: 700,
+  margin: 'auto',
+  display: 'block',
+}
+
+var canvas = d3.select('body').append('canvas')
+		.attr('width', config.width + 'px')
+		.attr('height', config.height + 'px')
+    .style('display', config.display)
+    .style('margin', config.margin)
+
 fetch('https://raw.githubusercontent.com/DealPete/forceDirected/master/countries.json')
 .then(response => response.json())
 .then(data => {
-  const config = {
-    width: 80 + '%',
-    height: 700 + 'px',
-		background_color: '#ffffff',
-		fill: 'cadetblue',
-    display: 'block',
-    margin: '0 auto',
-    border: '1px solid black'
-  }
+  var simulation = d3.forceSimulation(data.nodes)
 
+	var context = canvas.node().getContext('2d')
 
-		var root = d3.select('body')
-					.append('canvas')
-					.style('background-color', config.background_color)
-					.style('width', config.width)
-					.style('height', config.height)
-					.style('border', config.border)
-					.style('padding', config.padding + 'px')
-					.style('display', config.display)
-					.style('margin', config.margin)
+  const flags = []
+  data.nodes.forEach((d, i) => {
+    // modified from Thomas's answer on this Stack Overflow thread: https://stackoverflow.com/questions/6011378/how-to-add-image-to-canvas
 
-		var simulation = d3.forceSimulation(data.nodes)
-      .force("collisionForce", d3.forceCollide(15))
-			.force("link", d3.forceLink(data.links))
-			.force("center", d3.forceCenter()).on('tick', renderTick);
+    let flag = document.createElement('div') 
+    flag.classList.add('flag', 'flag-' + d.code)
+    flag.onerror = () => { alert('not working!') }
+    flag.style.position = 'absolute'
+    flag.style.left = d.x + 350 + 'px'
+    flag.style.top = d.y + 480 + 'px'
+    flags.push({div: flag, code: d.code})
 
-		renderCurrentNodeState()
+    document.body.appendChild(flag)
 
-		console.log(data)
+  })
 
-    var img_src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-		function renderCurrentNodeState() {
-			root.selectAll('.node')
-          .data(simulation.nodes())
-          .enter()
-          .append('div')
-          .attr('class', 'styled')
-					.style('left', d => d.x)
-					.style('top', d => d.y)
-      //.append('div').style('position', 'absolute').style('left', d => d.x + 400).style('top', d => d.y + 400).style('width', '5px').style('height', '5px').style('border-radius', '2.5px').style('background-color', 'black')
-    }
-		function renderTick() {
-			//from StackOverflow: https://stackoverflow.com/questions/3674265/is-there-an-easy-way-to-clear-an-svg-elements-contents
-			root.selectAll('*').remove()
-		  renderCurrentNodeState()
-		}
-  console.log(data)
-})
-.catch(err => {
-  console.log(err)
+//	var force = simulation.nodes(data.nodes)
+//
+//  force
+//			 .links(data.links)
+//       .charge(0)
+//       .charge(-75)
+//			 .on('tick', tick)
+//  
+//  force.start()
+
+  function tick() {
+	  context.clearRect(0, 0, config.width, config.height)
+
+		context.strokeStyle = "#ccc"
+		context.beginPath();
+
+		data.links.forEach(d => {
+		  context.moveTo(d.source.x, d.source.y)
+			context.lineTo(d.target.x, d.target.y)
+		})
+
+		context.stroke()
+
+    data.nodes.forEach(d => {
+      let current_flag = flags.filter(e => d.code === e.code)[0].div
+      current_flag.style.left = d.x + 'px'
+      current_flag.style.top = d.y + 49 + 'px'
+    })
+	}
 })
