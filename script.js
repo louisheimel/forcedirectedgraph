@@ -3,8 +3,42 @@
 var config = {
 	width:  800,
 	height: 700,
+  leftFlagOffset: 250,
+  topFlagOffset: 300,
   margin: 'auto',
   display: 'block',
+}
+
+
+const flags = []
+
+const update = (e) => {
+  // check if e is in array
+  const flagIsInList = el => flags.map(e => e.code).includes(e.code)
+  if (flagIsInList(e)) {
+
+    let current_flag_element = flags.filter(el => el.code === e.code)[0].div
+    current_flag_element.style.left = e.x + config.leftFlagOffset + 'px'
+    current_flag_element.style.top = e.y + config.topFlagOffset + 'px'
+
+  } else {
+    // push new obj to array
+    let flag = document.createElement('div')
+    flag.classList.add('flag', 'flag-' + e.code)
+    flag.onerror = () => { alert('not working!') }
+    flag.style.position = 'absolute'
+    flag.style.left = e.x + config.leftFlagOffset + 'px'
+    flag.style.top = e.y + config.topFlagOffset + 'px'
+
+    let obj = {code: e.code, div: flag}
+    flags.push(obj)
+
+    document.body.appendChild(flag)
+
+    flags.push(obj)
+  }
+  
+  return e
 }
 
 var canvas = d3.select('body').append('canvas')
@@ -16,35 +50,20 @@ var canvas = d3.select('body').append('canvas')
 fetch('https://raw.githubusercontent.com/DealPete/forceDirected/master/countries.json')
 .then(response => response.json())
 .then(data => {
+  const renderNodes = (arr) => {
+    arr.forEach((d, i) => {
+      update(d)
+    })
+  }
+
   var simulation = d3.forceSimulation(data.nodes)
+                     .force('charge', d3.forceManyBody().strength(-4))
+                     .force('link', d3.forceLink(data.links))
+                     .force('center', d3.forceCenter())
 
+  renderNodes(simulation.nodes())
+  simulation.on('tick', function(d) { renderNodes(this.nodes()); tick(); })
 	var context = canvas.node().getContext('2d')
-
-  const flags = []
-  data.nodes.forEach((d, i) => {
-    // modified from Thomas's answer on this Stack Overflow thread: https://stackoverflow.com/questions/6011378/how-to-add-image-to-canvas
-
-    let flag = document.createElement('div') 
-    flag.classList.add('flag', 'flag-' + d.code)
-    flag.onerror = () => { alert('not working!') }
-    flag.style.position = 'absolute'
-    flag.style.left = d.x + 350 + 'px'
-    flag.style.top = d.y + 480 + 'px'
-    flags.push({div: flag, code: d.code})
-
-    document.body.appendChild(flag)
-
-  })
-
-//	var force = simulation.nodes(data.nodes)
-//
-//  force
-//			 .links(data.links)
-//       .charge(0)
-//       .charge(-75)
-//			 .on('tick', tick)
-//  
-//  force.start()
 
   function tick() {
 	  context.clearRect(0, 0, config.width, config.height)
@@ -61,8 +80,8 @@ fetch('https://raw.githubusercontent.com/DealPete/forceDirected/master/countries
 
     data.nodes.forEach(d => {
       let current_flag = flags.filter(e => d.code === e.code)[0].div
-      current_flag.style.left = d.x + 'px'
-      current_flag.style.top = d.y + 49 + 'px'
+      current_flag.style.left = d.x + config.leftFlagOffset + 'px'
+      current_flag.style.top = d.y + config.topFlagOffset + 'px'
     })
 	}
 })
