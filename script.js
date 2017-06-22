@@ -3,8 +3,8 @@
 var config = {
 	width:  800,
 	height: 700,
-  leftFlagOffset: 250,
-  topFlagOffset: 300,
+  leftFlagOffset: 500,
+  topFlagOffset: 320,
   margin: 'auto',
   display: 'block',
 }
@@ -65,6 +65,8 @@ fetch('https://raw.githubusercontent.com/DealPete/forceDirected/master/countries
   simulation.on('tick', function(d) { renderNodes(this.nodes()); tick(); })
 	var context = canvas.node().getContext('2d')
 
+  var linkOffsetX = -230,
+      linkOffsetY = -45;
   function tick() {
 	  context.clearRect(0, 0, config.width, config.height)
 
@@ -72,8 +74,8 @@ fetch('https://raw.githubusercontent.com/DealPete/forceDirected/master/countries
 		context.beginPath();
 
 		data.links.forEach(d => {
-		  context.moveTo(d.source.x, d.source.y)
-			context.lineTo(d.target.x, d.target.y)
+		  context.moveTo(d.source.x + config.leftFlagOffset + linkOffsetX, d.source.y + config.topFlagOffset + linkOffsetY)
+			context.lineTo(d.target.x + config.leftFlagOffset + linkOffsetX, d.target.y + config.topFlagOffset + linkOffsetY)
 		})
 
 		context.stroke()
