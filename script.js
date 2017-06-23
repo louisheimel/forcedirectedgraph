@@ -24,8 +24,8 @@ const update = (e) => {
   } else {
     // push new obj to array
     let flag = document.createElement('div')
+    flag.style.draggable = 'true' 
     flag.classList.add('flag', 'flag-' + e.code)
-    flag.onerror = () => { alert('not working!') }
     flag.style.position = 'absolute'
     flag.style.left = e.x + config.leftFlagOffset + 'px'
     flag.style.top = e.y + config.topFlagOffset + 'px'
@@ -47,9 +47,52 @@ var canvas = d3.select('body').append('canvas')
     .style('display', config.display)
     .style('margin', config.margin)
 
+
+
 fetch('https://raw.githubusercontent.com/DealPete/forceDirected/master/countries.json')
 .then(response => response.json())
 .then(data => {
+
+	// code modified from this Stack Overflow post: https://stackoverflow.com/questions/39218916/how-to-make-a-html-div-draggable-using-d3
+
+	const addDivDragging = (sim) => {
+    const isADiv = (e) => e.target.tagName === 'DIV'
+
+
+		const divState = 
+			{ dragging: false,
+				mouseTarget: null,
+				flagCode: null, 
+			};
+
+		const divMove = (e) => {
+			// e is a mousedrag event
+			// update x and y coordinates of currently moving div
+			let current_flag = sim.nodes().filter(d => d.code === divState.flagCode)[0]
+			current_flag.x = e.clientX - 500 
+	  	current_flag.y = e.clientY - 120 
+		}
+
+    window.addEventListener('mousedown', (e) => {
+			if (isADiv(e)) {
+				sim.restart()
+				divState.dragging = true;
+				divState.mouseTarget = e.target
+				divState.flagCode = e.target.classList[1].split('-')[1]
+				window.addEventListener('mousemove', divMove)
+			}
+    })
+
+		window.addEventListener('mouseup', (e) => {
+				if (divState.dragging) {
+					divState.dragging = false;
+					divState.mouseTarget = null
+					window.removeEventListener('mousemove', divMove)
+				}
+    })
+	}
+
+
   const renderNodes = (arr) => {
     arr.forEach((d, i) => {
       update(d)
@@ -60,6 +103,11 @@ fetch('https://raw.githubusercontent.com/DealPete/forceDirected/master/countries
                      .force('charge', d3.forceManyBody().strength(-4))
                      .force('link', d3.forceLink(data.links))
                      .force('center', d3.forceCenter())
+										 .alphaTarget(.03)
+						
+
+  addDivDragging(simulation)
+  
 
   renderNodes(simulation.nodes())
   simulation.on('tick', function(d) { renderNodes(this.nodes()); tick(); })
