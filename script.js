@@ -3,8 +3,8 @@
 var config = {
 	width:  800,
 	height: 700,
-  leftFlagOffset: 500,
-  topFlagOffset: 320,
+  leftFlagOffset: 550,
+  topFlagOffset: 375,
   margin: 'auto',
   display: 'block',
 }
@@ -69,8 +69,8 @@ fetch('https://raw.githubusercontent.com/DealPete/forceDirected/master/countries
 			// e is a mousedrag event
 			// update x and y coordinates of currently moving div
 			let current_flag = sim.nodes().filter(d => d.code === divState.flagCode)[0]
-			current_flag.x = e.clientX - config.leftFlagOffset 
-	  	current_flag.y = e.clientY - config.topFlagOffset 
+			current_flag.x = e.clientX - 8 - config.leftFlagOffset 
+	  	current_flag.y = e.clientY - 5 - config.topFlagOffset 
 		}
 
     window.addEventListener('mousedown', (e) => {
@@ -100,7 +100,9 @@ fetch('https://raw.githubusercontent.com/DealPete/forceDirected/master/countries
   }
 
   var simulation = d3.forceSimulation(data.nodes)
-                     .force('charge', d3.forceManyBody().strength(-4))
+                     .force('xAxis', d3.forceX().x(config.width / 2))
+                     .force('yAxis', d3.forceY().y(config.height / 2))
+                     .force('repelForce', d3.forceManyBody().strength(-50))
                      .force('link', d3.forceLink(data.links))
                      .force('center', d3.forceCenter())
 										 .alphaTarget(.03)
