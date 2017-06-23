@@ -1,1 +1,5 @@
 @import url('flags.min.css');
+
+div:hover {
+  cursor: default;
+}

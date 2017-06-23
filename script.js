@@ -69,8 +69,8 @@ fetch('https://raw.githubusercontent.com/DealPete/forceDirected/master/countries
 			// e is a mousedrag event
 			// update x and y coordinates of currently moving div
 			let current_flag = sim.nodes().filter(d => d.code === divState.flagCode)[0]
-			current_flag.x = e.clientX - 500 
-	  	current_flag.y = e.clientY - 120 
+			current_flag.x = e.clientX - config.leftFlagOffset 
+	  	current_flag.y = e.clientY - config.topFlagOffset 
 		}
 
     window.addEventListener('mousedown', (e) => {
