@@ -5,7 +5,7 @@ var config = {
 	height: 700,
   leftFlagOffset: 550,
   topFlagOffset: 375,
-  leftLinkOffset: -110,
+  leftLinkOffset: -105,
   topLinkOffset: -45,
   margin: 'auto',
   display: 'block',
