@@ -6,7 +6,7 @@ var config = {
   leftFlagOffset: 550,
   topFlagOffset: 375,
   leftLinkOffset: -95,
-  topLinkOffset: -42.5,
+  topLinkOffset: -40,
   margin: 'auto',
   display: 'block',
 }
