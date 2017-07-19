@@ -5,6 +5,8 @@ var config = {
 	height: 700,
   leftFlagOffset: 550,
   topFlagOffset: 375,
+  leftLinkOffset: -330,
+  topLinkOffset: -45,
   margin: 'auto',
   display: 'block',
 }
@@ -115,8 +117,8 @@ fetch('https://raw.githubusercontent.com/DealPete/forceDirected/master/countries
   simulation.on('tick', function(d) { renderNodes(this.nodes()); tick(); })
 	var context = canvas.node().getContext('2d')
 
-  var linkOffsetX = -230,
-      linkOffsetY = -45;
+  var linkOffsetX = config.leftLinkOffset,
+      linkOffsetY = config.topLinkOffset;
   function tick() {
 	  context.clearRect(0, 0, config.width, config.height)
 
