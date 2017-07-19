@@ -3,7 +3,7 @@
 var config = {
 	width:  800,
 	height: 700,
-  leftFlagOffset: 550,
+  leftFlagOffset: 350,
   topFlagOffset: 375,
   margin: 'auto',
   display: 'block',
