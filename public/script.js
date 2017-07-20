@@ -1,11 +1,11 @@
 // modified from the following code (Written by Mike Bostock): https://bl.ocks.org/mbostock/3180395
 
 var config = {
-	width:  800,
-	height: 700,
-  leftFlagOffset: 550,
+	width:  screen.width,
+	height: screen.height,
+  leftFlagOffset: 500,
   topFlagOffset: 375,
-  leftLinkOffset: -95,
+  leftLinkOffset: 0,
   topLinkOffset: -40,
   margin: 'auto',
   display: 'block',
@@ -117,25 +117,32 @@ fetch('https://raw.githubusercontent.com/DealPete/forceDirected/master/countries
   simulation.on('tick', function(d) { renderNodes(this.nodes()); tick(); })
 	var context = canvas.node().getContext('2d')
 
-  var linkOffsetX = config.leftLinkOffset,
-      linkOffsetY = config.topLinkOffset;
   function tick() {
+
+    const drawLink = d => {
+      var linkOffsetX = config.leftLinkOffset,
+        linkOffsetY = config.topLinkOffset;
+
+		  context.moveTo(d.source.x + config.leftFlagOffset + linkOffsetX, d.source.y + config.topFlagOffset + linkOffsetY)
+			context.lineTo(d.target.x + config.leftFlagOffset + linkOffsetX, d.target.y + config.topFlagOffset + linkOffsetY)
+		},
+    drawFlag = d => {
+      let current_flag = flags.filter(e => d.code === e.code)[0].div
+      current_flag.style.left = d.x + config.leftFlagOffset + 'px'
+      current_flag.style.top = d.y + config.topFlagOffset + 'px'
+    }
+    
 	  context.clearRect(0, 0, config.width, config.height)
 
 		context.strokeStyle = "#ccc"
 		context.beginPath();
 
-		data.links.forEach(d => {
-		  context.moveTo(d.source.x + config.leftFlagOffset + linkOffsetX, d.source.y + config.topFlagOffset + linkOffsetY)
-			context.lineTo(d.target.x + config.leftFlagOffset + linkOffsetX, d.target.y + config.topFlagOffset + linkOffsetY)
-		})
+
+		data.links.forEach(drawLink)
 
 		context.stroke()
 
-    data.nodes.forEach(d => {
-      let current_flag = flags.filter(e => d.code === e.code)[0].div
-      current_flag.style.left = d.x + config.leftFlagOffset + 'px'
-      current_flag.style.top = d.y + config.topFlagOffset + 'px'
-    })
+     
+    data.nodes.forEach(drawFlag)
 	}
 })
